@@ -1,0 +1,565 @@
+{
+  "name": "QUANTSTATS_NEXTJS",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant\n\nWhen sharing URLs, please format them like this:\n<url>http://example.com</url>\n\nFor example:\n<url>https://rex.tigzig.com/web-scraper</url>\n<url>http://mdtopdf.hosting.tigzig.com/static/pdfs/report.pdf</url>\n\nWhen user asks what all can you do - it is referring to the tools at your disposal. Dont share general capabilities - share what all you can do with your tools - and start with the QuantStat Report, Technical Analysis Report and then the Yahoo Finance Data Pull. Keep it concise. \n\nIf you get an error or something in your tools then don't make up a response . Share the error or the response you received with the user so the user can intelligently decide the next step or get in touch with me\n\n### For Quantstats Tool\nDefault past 5 year period if user has not specified, but check with the user first if the date range and other parameters are ok. Share the actual date range you are planning to use and also the default risk free rate you are planning on .. don't just start running the tool\n\n### For Technical Analysis tool \nIf the user has not specified a date , then suggest a useful date range ending today's like in example below.. and await confirmation from the user .. don't just start running the tool\nDaily: November 1, 2024 – April 24, 2025 (approx past 6 months) \nWeekly: April 1, 2023 – April 24, 2025 (approx past 2 years)\nJust in case you are not able to get the report generated then share this url with user - from where it can directly generate the report\nhttps://rex.tigzig.com/ta-analysis\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -500,
+        -420
+      ],
+      "id": "973ec610-f8f7-477f-8611-4fc833be584c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -700,
+        -180
+      ],
+      "id": "18f97837-412f-4044-84ec-304d5e910bfc",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "N4FqXcavflFvmomg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant\n\nWhen sharing URLs, please format them like this:\n<url>http://example.com</url>\n\nFor example:\n<url>https://rex.tigzig.com/web-scraper</url>\n<url>http://mdtopdf.hosting.tigzig.com/static/pdfs/report.pdf</url>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -480,
+        100
+      ],
+      "id": "d900b3a1-b147-40d6-be18-bc451fec1ef3",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -660,
+        380
+      ],
+      "id": "1095ce59-6515-487c-ace4-052a783da8cd",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "N4FqXcavflFvmomg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://yfin.hosting.tigzig.com/mcp",
+        "include": "selected",
+        "includeTools": [
+          "get_detailed_info",
+          "get_market_data",
+          "get_all_prices",
+          "get_income_statement_excel",
+          "get_balance_sheet_excel",
+          "get_cash_flow_excel",
+          "get_quarterly_income_statement_excel"
+        ]
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        380
+      ],
+      "id": "0f034da8-899d-4dd9-9711-b973c5d7eac0",
+      "name": "MCP YFIN1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "52d01997-ad92-4ff0-bf40-54e056690423",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -940,
+        100
+      ],
+      "id": "13414abf-b845-4bcc-9c8c-7d731d4bd16b",
+      "name": "Webhook2",
+      "webhookId": "52d01997-ad92-4ff0-bf40-54e056690423"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ae029b6d-bc93-4055-a388-e77b918cc4e5",
+              "name": "text",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -120,
+        100
+      ],
+      "id": "e61a20aa-ef54-4c2b-ba11-f992fc443ab7",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        60,
+        100
+      ],
+      "id": "f6434363-f8f5-48fa-99eb-b2ec0afe48c8",
+      "name": "Respond to REX1"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        -420
+      ],
+      "id": "d1bec82a-3909-4790-baba-cc0708a31f01",
+      "name": "When chat message received",
+      "webhookId": "b3ecdaec-932d-4a52-90e6-69d86ec65d3c"
+    },
+    {
+      "parameters": {
+        "content": "Next JS Technical Analyst\nUsed in Live Demo",
+        "height": 80,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1100,
+        -540
+      ],
+      "id": "fc436236-411a-4e7c-9aff-65a85d79c5f0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "REX Flowise Setup \nunder testing",
+        "height": 100,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1100,
+        -40
+      ],
+      "id": "1fdfc08c-d77b-42b4-89d1-c12bc91ceb9e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook2').item.json.body.overrideConfig.sessionId }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -520,
+        380
+      ],
+      "id": "3d5fe863-5bf7-4e91-9a9f-ae541e091685",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3dcf5123-fd7f-40ba-8dba-b542cdb81589",
+              "name": "=todaysDate",
+              "value": "={{ new Date().toISOString().split('T')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "97c6f80d-bc6d-492e-9450-8aaf326e107c",
+              "name": "chatInput",
+              "value": "={{ $json.body.question }}",
+              "type": "string"
+            },
+            {
+              "id": "72b1ce80-d1c5-45a0-8614-c44b828ab421",
+              "name": "sessionId",
+              "value": "={{ \"[System Note: Today is \" + new Date().toISOString().split('T')[0] + \". Please keep this in mind when interpreting references to 'today' or 'last 5 days'.]\\n\\nUser: \" + $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        100
+      ],
+      "id": "b4c9a8af-29a7-4989-a13b-a182232461a6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -560,
+        -180
+      ],
+      "id": "1cb2b234-13f3-40b8-a905-f57428861f7a",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3dcf5123-fd7f-40ba-8dba-b542cdb81589",
+              "name": "=todaysDate",
+              "value": "={{ new Date().toISOString().split('T')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "97c6f80d-bc6d-492e-9450-8aaf326e107c",
+              "name": "chatInput",
+              "value": "={{ \"[System Note: Today is \" + new Date().toISOString().split('T')[0] + \". Please keep this in mind when interpreting references to 'today' or 'last 5 days'.]\\n\\nUser: \" + $json.chatInput }}\n",
+              "type": "string"
+            },
+            {
+              "id": "72b1ce80-d1c5-45a0-8614-c44b828ab421",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -420
+      ],
+      "id": "973841f0-23fe-4bf2-8058-c5c6a7d240ad",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://ta.hosting.tigzig.com/mcp",
+        "include": "selected",
+        "includeTools": [
+          "create_technical_analysis"
+        ]
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        380
+      ],
+      "id": "f1d3ae6e-b6fa-4df2-978e-5ac07ede2e8b",
+      "name": "MCP_TECH_AN"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://ta.hosting.tigzig.com/mcp",
+        "include": "selected",
+        "includeTools": [
+          "create_technical_analysis"
+        ]
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -180
+      ],
+      "id": "a3c208d7-bc27-4bd7-b61d-6b65f93d0b63",
+      "name": "MCP_TECH_AN1"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://yfin.hosting.tigzig.com/mcp",
+        "include": "selected",
+        "includeTools": [
+          "get_detailed_info",
+          "get_market_data",
+          "get_all_prices",
+          "get_income_statement_excel",
+          "get_balance_sheet_excel",
+          "get_cash_flow_excel",
+          "get_quarterly_income_statement_excel"
+        ]
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        -180
+      ],
+      "id": "f8297173-6763-478e-8ad9-ce7da550fa7f",
+      "name": "MCP YFIN"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://quantstats.hosting.tigzig.com/mcp",
+        "include": "selected",
+        "includeTools": [
+          "create_portfolio_analysis"
+        ]
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -180
+      ],
+      "id": "90e2bd91-66e0-4d5d-bfa2-aebc0a34eaed",
+      "name": "MCP_QUANTSTATS"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP YFIN1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Respond to REX1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP_TECH_AN": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP_TECH_AN1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP YFIN": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP_QUANTSTATS": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "59cda3e0-d2fa-48bb-88f2-cfda9feb89dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9c2f7f75f60bc212f271bad290e53964de74dfd31c0053a006339bfd1b487799"
+  },
+  "id": "lxJvq24ylXd6Ilmf",
+  "tags": []
+}
