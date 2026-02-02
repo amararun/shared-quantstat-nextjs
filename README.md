@@ -98,3 +98,9 @@ This project contains some redundant files due to its evolution. I am continuyin
 - Recent cleanup has removed redundant components and consolidated functionality
 
 When making future changes, always target the active files listed above and ignore the redundant ones.
+
+## Author
+
+Built by [Amar Harolikar](https://www.linkedin.com/in/amarharolikar/)
+
+Explore 30+ open source AI tools for analytics, databases & automation at [tigzig.com](https://tigzig.com)
